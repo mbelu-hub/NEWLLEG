@@ -1,0 +1,21 @@
+.language-selector {
+    margin-left: 20px;
+  
+    display: flex;
+    align-items: center;
+}
+
+.language-selector label {
+    margin-right: 20px;
+   
+}
+
+#language-select {
+    padding: 8px;
+    border-radius: 5px;
+}
+
+#google_translate_element{
+    margin-left: 20px;
+    margin-top: 20px
+}
