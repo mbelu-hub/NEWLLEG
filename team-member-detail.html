@@ -226,7 +226,7 @@
 									</div>
 									<ul class="pbmit-single-team-info">
 										<li><label>Téléphone</label>+243 897586314</li>
-										<li><label>E-mail</label> <a href="mailto:hello@infopbm.com">adm@lleg.com</a></li>
+										<li><label>E-mail</label> <a href="mailto:hello@infopbm.com">lumbala@lleg.com</a></li>
 										<li><label>Expérience</label> Plus de 12 ans</li>
 									</ul>
 									<ul class="pbmit-social-links pbmit-team-social-links">
@@ -431,32 +431,36 @@
 										<h3 class="pbmit-title mb-3">Envoyer un message</h3>
 									</div>
 									<div class="comment-form">
-										<form>
+										<form id="contactForm" action="https://formspree.io/f/xzzgvpgo" method="POST">
+											<input type="hidden" name="_redirect" value="merci.html"> <!-- Optional if you want redirection -->
 											<div class="row">
+												<div class="col-md-6">
+													<input type="text" class="form-control" placeholder="Votre nom" name="nom" required>
+												</div>
+												<div class="col-md-6">
+													<input type="tel" class="form-control" placeholder="Numéro de téléphone" name="téléphone" required>
+												</div>
+												<div class="col-md-6">
+													<input type="email" class="form-control" placeholder="Adresse e-mail" name="email" required>
+												</div>
+												<div class="col-md-6">
+													<input type="text" class="form-control" placeholder="Sujet" name="subject" required>
+												</div>
 												<div class="col-md-12">
-													<textarea class="form-control" id="exampleFormControlTextarea1" placeholder="Message" rows="3"></textarea>
+													<textarea name="message" cols="40" rows="10" class="form-control" placeholder="Comment" required></textarea>
 												</div>
-												<div class="col-md-6"> 
-													<input id="name" type="text" placeholder="Votre nom " class="form-control" name="nom">
-												</div>
-												<div class="col-md-6"> 
-													<input id="email" class="form-control" placeholder="Votre email " name="email" type="e-mail" value="">
-												</div>
-												<div class="col-md-6"> 
-													<input class="form-control" placeholder="Sujet" name="Sujet" type="text" value="">
-												</div>
-												<div class="col-md-6"> 
-													<input id="url" class="form-control" placeholder="Téléphone" name="Téléphone" type="text" value="">
-												</div>
-												<div class="col-md-12"> 
-													<button class="pbmit-btn pbmit-btn-hover-global">
-														<span class="pbmit-button-text">Soumettre maintenant</span>
+												<div class="col-md-12">
+													<button type="submit" class="pbmit-btn pbmit-btn-hover-global">
+														<span class="pbmit-button-text">Envoyer un message</span>
 														<span class="pbmit-button-icon-wrapper">
 															<span class="pbmit-button-icon">
 																<i class="pbmit-base-icon-black-arrow-1"></i>
 															</span>
 														</span>
 													</button>
+												</div>
+												<div class="col-md-12">
+													<p id="formMessage" style="margin-top: 10px;"></p>
 												</div>
 											</div>
 										</form>
@@ -623,8 +627,7 @@
 								</ul>
 							</div>
 						</div>
-					</div>
-				</div>
+					</div></div>
 			</div>
 		</footer>
 		<!-- footer End -->
@@ -693,6 +696,64 @@
 	<script src='js/gsap-animation.js'></script>
 	<!-- Scripts JS -->
 	<script src="js/scripts.js"></script>
+
+	<!-- Firebase + Formspree Logic -->
+	<script type="module">
+		import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+		import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+		const firebaseConfig = {
+			apiKey: "AIzaSyBObt9vceod5TQLJND3oc4M3Hdaw74KCU0",
+			authDomain: "lleg-7bdd3.firebaseapp.com",
+			projectId: "lleg-7bdd3",
+			storageBucket: "lleg-7bdd3.appspot.com",
+			messagingSenderId: "643017032523",
+			appId: "1:643017032523:web:23d5fba26628a87ea35ece",
+			measurementId: "G-RQK4JT0WG2",
+			databaseURL: "https://lleg-7bdd3-default-rtdb.firebaseio.com"
+		};
+
+		const app = initializeApp(firebaseConfig);
+		const db = getDatabase(app);
+
+		const form = document.getElementById("contactForm");
+		const message = document.getElementById("formMessage");
+
+		form.addEventListener("submit", async (e) => {
+			e.preventDefault();
+
+			const formData = new FormData(form);
+			const data = {
+				nom: formData.get("nom"),
+				téléphone: formData.get("téléphone"),
+				email: formData.get("email"),
+				subject: formData.get("subject"),
+				message: formData.get("message"),
+				submittedAt: new Date().toISOString()
+			};
+
+			try {
+				// Send to Formspree
+				const response = await fetch(form.action, {
+					method: "POST",
+					body: formData,
+					headers: { "Accept": "application/json" }
+				});
+
+				if (!response.ok) throw new Error("Erreur avec Formspree");
+
+				// Save to Firebase
+				await push(ref(db, "messages"), data);
+
+				message.textContent = "✅ Merci ! Votre message a été envoyé et sauvegardé avec succès.";
+				message.style.color = "green";
+				form.reset();
+			} catch (err) {
+				message.textContent = "❌ Erreur : " + err.message;
+				message.style.color = "red";
+			}
+		});
+	</script>
 
 </body>
 

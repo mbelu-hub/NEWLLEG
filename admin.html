@@ -1,0 +1,161 @@
+<!-- <!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - Messages</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+        }
+
+        .login-box,
+        .dashboard {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-box" id="loginBox">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">Login</button>
+        <p id="loginError" style="color:red;"></p>
+    </div>
+
+    <div class="dashboard" id="dashboard" style="display:none;">
+        <h2>Contact Messages</h2>
+        <button onclick="downloadCSV()">Download CSV</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Téléphone</th>
+                    <th>Email</th>
+                    <th>Sujet</th>
+                    <th>Message</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody id="messagesTable"></tbody>
+        </table>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBObt9vceod5TQLJND3oc4M3Hdaw74KCU0",
+            authDomain: "lleg-7bdd3.firebaseapp.com",
+            projectId: "lleg-7bdd3",
+            storageBucket: "lleg-7bdd3.appspot.com",
+            messagingSenderId: "643017032523",
+            appId: "1:643017032523:web:23d5fba26628a87ea35ece",
+            measurementId: "G-RQK4JT0WG2"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const messagesRef = ref(db, "messages");
+
+        onValue(messagesRef, (snapshot) => {
+            const table = document.getElementById("messagesTable");
+            table.innerHTML = "";
+            const rows = [];
+            snapshot.forEach(child => {
+                const data = child.val();
+                const row = `<tr>
+        <td>${data.nom}</td>
+        <td>${data.téléphone}</td>
+        <td><a href="mailto:${data.email}">${data.email}</a></td>
+        <td>${data.subject}</td>
+        <td>${data.message}</td>
+        <td>${new Date(data.submittedAt).toLocaleString()}</td>
+      </tr>`;
+                rows.push(row);
+            });
+            table.innerHTML = rows.join("");
+        });
+
+        // CSV download
+        window.downloadCSV = function () {
+            const rows = [["Nom", "Téléphone", "Email", "Sujet", "Message", "Date"]];
+            const tableRows = document.querySelectorAll("#messagesTable tr");
+            tableRows.forEach(row => {
+                const cols = row.querySelectorAll("td");
+                const rowData = Array.from(cols).map(td => '"' + td.innerText.replace(/"/g, '""') + '"');
+                rows.push(rowData);
+            });
+            const csvContent = rows.map(e => e.join(",")).join("\n");
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", "messages.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Login
+        window.login = function () {
+            const user = document.getElementById("username").value;
+            const pass = document.getElementById("password").value;
+            if (user === "admin" && pass === "1234") {
+                document.getElementById("loginBox").style.display = "none";
+                document.getElementById("dashboard").style.display = "block";
+            } else {
+                document.getElementById("loginError").innerText = "Incorrect username or password";
+            }
+        }
+    </script>
+
+</body>
+
+</html> -->
