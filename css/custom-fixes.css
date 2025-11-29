@@ -1,0 +1,32 @@
+/* Custom fixes for LLEG website */
+
+/* Standardize logo sizing */
+.logo-img, .logo-im {
+    width: 80px;
+    height: auto;
+}
+
+/* Google Translate widget positioning */
+#google_translate_element {
+    position: fixed;
+    top: 10px;
+    right: 15px;
+    z-index: 9999;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 5px;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Responsive logo sizing */
+@media (max-width: 768px) {
+    .logo-img, .logo-im {
+        width: 60px;
+    }
+    
+    #google_translate_element {
+        top: 5px;
+        right: 5px;
+        font-size: 12px;
+    }
+}
